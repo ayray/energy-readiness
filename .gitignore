@@ -1,0 +1,19 @@
+# Dependencies and build output
+node_modules/
+dist/
+
+# Test artifacts
+test-results/
+playwright-report/
+blob-report/
+
+# Local tooling output
+.impeccable/
+.vite/
+*.log
+*.tsbuildinfo
+
+# Environment and OS files
+.env
+.env.*
+.DS_Store

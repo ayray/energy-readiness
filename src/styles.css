@@ -1,0 +1,242 @@
+:root {
+  /* Dark-first canvas (inspired by Safire's public site; values are our own). */
+  --bg: #0d0d0d;
+  --panel: #191816;
+  --panel-raised: #211f1c;
+  --ink: #f7efe5;
+  --muted: #b9b1a5;
+  --rule: #3a3833;
+  --rule-strong: #5a564e;
+
+  /* Single energy accent: fresh telemetry only. */
+  --accent: #5fe3b0;
+
+  --amber: #f2b45a;
+  --slate: #aeb7c3;
+  --blue: #93bcf5;
+  --focus: #93bcf5;
+
+  --sans: "Barlow", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 400 17px/1.5 var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap { display: block; max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+::selection { background: rgba(147, 188, 245, 0.35); color: var(--ink); }
+input { caret-color: var(--ink); }
+
+/* Radios: custom so the selected state reads clearly on the dark canvas. */
+input[type="radio"] {
+  appearance: none; flex: none; width: 18px; height: 18px; margin: 0; border-radius: 50%;
+  border: 2px solid var(--rule-strong); background: var(--bg); display: inline-grid; place-content: center; cursor: pointer;
+}
+input[type="radio"]::before { content: ""; width: 8px; height: 8px; border-radius: 50%; transform: scale(0); background: var(--ink); }
+input[type="radio"]:checked { border-color: var(--ink); }
+input[type="radio"]:checked::before { transform: scale(1); }
+label:has(> input[type="radio"]:checked) { color: var(--ink); }
+@media (forced-colors: active) { input[type="radio"] { appearance: auto; } }
+
+.pill, .presenter-label, .panel-heading, .card-label, .status-label, dt, .clock span {
+  font-family: var(--mono); font-size: 12px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+}
+
+.pill {
+  display: inline-flex; align-items: center; gap: 6px; white-space: nowrap;
+  border: 1px solid var(--rule-strong); border-radius: 999px; padding: 2px 10px; color: var(--muted);
+  font-size: 12px;
+}
+
+/* Presenter tray: visibly outside the application */
+/* Deliberately quiet: same canvas as the page, dashed hairline, muted small text. */
+.presenter { border-bottom: 1px dashed var(--rule-strong); }
+.presenter-row { display: flex; align-items: center; gap: 6px 20px; flex-wrap: wrap; padding-top: 6px; padding-bottom: 6px; color: var(--muted); }
+.presenter-label { color: var(--muted); font-size: 12px; text-transform: none; letter-spacing: 0.02em; }
+.scenario { display: flex; gap: 16px; border: 0; margin: 0; padding: 0; }
+.scenario label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-size: 13px; min-height: 24px; }
+.scenario input { width: 16px; height: 16px; }
+.scenario input::before { width: 6px; height: 6px; }
+.presenter .btn-quiet { margin-left: auto; font-size: 13px; min-height: 28px; padding: 2px 12px; border-color: var(--rule-strong); color: var(--muted); }
+
+/* Application bar */
+.appbar { border-bottom: 1px solid var(--rule); }
+.appbar-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-top: 14px; padding-bottom: 14px; }
+h1 { margin: 0; font-size: 20px; font-weight: 600; letter-spacing: 0.01em; }
+h1 span { font-weight: 400; color: var(--muted); margin-left: 10px; }
+.appbar-meta { display: flex; align-items: center; gap: 16px; }
+.clock { font-family: var(--mono); font-size: 15px; font-weight: 500; white-space: nowrap; }
+.clock span { color: var(--muted); font-size: 12px; margin-left: 6px; }
+/* Back to portfolio: quiet text link, separated from the app meta by a hairline. Never styled as an action. */
+.back-link {
+  color: var(--muted); font-size: 14px; text-decoration: none; white-space: nowrap;
+  padding: 1px 0 1px 16px; border-left: 1px solid var(--rule); line-height: 1.4;
+}
+.back-link:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+.back-link:focus-visible { color: var(--ink); outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 2px; }
+/* Narrower desktops: give the one-row header real slack; below that it wraps cleanly into two rows. */
+@media (max-width: 1100px) {
+  .appbar-row, .appbar-meta { column-gap: 12px; }
+  .back-link { padding-left: 12px; }
+  h1 span { font-size: 18px; margin-left: 8px; }
+}
+.disclaimer { margin: 0; padding: 8px 0; border-bottom: 1px solid var(--rule); color: var(--muted); font-size: 14px; }
+
+/* Asset */
+main.wrap { padding-top: 20px; padding-bottom: 56px; }
+.asset { margin: 0; font-size: 19px; }
+.asset strong { font-weight: 600; }
+
+/* Observe (telemetry, left ~40%) → Understand and decide (right ~60%).
+   DOM order is decision first, so on narrow screens and for screen readers the readiness warning leads.
+   Telemetry has no focusable controls, so keyboard order is unaffected by the visual placement. */
+.layout {
+  display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: 24px; margin-top: 16px; align-items: start;
+}
+.layout > .telemetry { grid-column: 1; grid-row: 1; }
+.layout > .primary { grid-column: 2; grid-row: 1; }
+
+/* Status */
+.status { background: var(--panel); border: 1px solid var(--rule); border-top: 3px solid; padding: 16px 22px; }
+.status p { margin: 0; }
+.status-label {
+  display: inline-flex; align-items: center; gap: 8px;
+  border: 1px solid currentColor; border-radius: 999px; padding: 3px 12px;
+}
+.shape { letter-spacing: 0; }
+.status-headline { margin: 12px 0 0; font-size: 26px; font-weight: 500; line-height: 1.25; }
+.status-detail { margin-top: 6px !important; color: var(--muted); max-width: 60ch; }
+.status-review { border-top-color: var(--amber); }
+.status-review .status-label { color: var(--amber); }
+.status-stale { border-top-color: var(--slate); border-top-style: dashed; }
+.status-stale .status-label { color: var(--slate); }
+.status-escalated { border-top-color: var(--blue); }
+.status-escalated .status-label { color: var(--blue); }
+.status-dismissed { border-top-color: var(--ink); }
+.status-dismissed .status-label { color: var(--ink); }
+
+/* Telemetry instrument panel */
+.telemetry { background: var(--panel); border: 1px solid var(--rule); }
+.panel-heading { margin: 0; color: var(--muted); }
+.telemetry-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 12px 18px; border-bottom: 1px solid var(--rule); }
+.card { padding: 14px 18px; border-bottom: 1px solid var(--rule); }
+.card:last-child { border-bottom: 0; }
+.card p { margin: 0; }
+.card-label { color: var(--muted); display: flex; align-items: center; gap: 8px; }
+.card-value { margin-top: 6px !important; font-family: var(--mono); font-size: 24px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.card-note { margin-top: 6px !important; color: var(--muted); font-size: 14px; }
+
+.transition { display: flex; align-items: center; gap: 10px; }
+.chip { font-size: 16px; border: 1px solid var(--rule-strong); border-radius: 4px; padding: 2px 10px; }
+.chip-from { color: var(--muted); }
+.chip-to { color: var(--amber); border-color: var(--amber); }
+.arrow { color: var(--muted); font-size: 18px; }
+
+.meter { margin-top: 10px; height: 6px; background: var(--rule); border-radius: 3px; overflow: hidden; }
+.meter span { display: block; height: 100%; background: var(--accent); border-radius: 3px; }
+.age-dot { color: var(--accent); }
+
+.is-historical { border-style: dashed; }
+.is-historical .card-value { color: var(--muted); font-size: 20px; }
+.is-historical .meter span { background: repeating-linear-gradient(135deg, #6e6a62 0 4px, transparent 4px 8px); }
+.is-historical .age-dot { color: var(--slate); }
+.pill-historical { color: var(--slate); border-color: var(--slate); border-style: dashed; }
+
+/* Evidence */
+/* Evidence: a full-width step of the workflow directly under the decision, not a footnote link. */
+.evidence { margin-top: 18px; }
+.disclosure {
+  display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; cursor: pointer;
+  font: inherit; color: var(--ink); background: var(--panel); border: 1px solid var(--rule-strong); border-radius: 2px;
+  padding: 12px 18px; min-height: 56px;
+}
+.disclosure:hover { background: var(--panel-raised); }
+.disclosure[aria-expanded="true"] { border-bottom-color: var(--rule); border-radius: 2px 2px 0 0; }
+.disclosure-icon { font-size: 22px; line-height: 1; color: var(--ink); width: 16px; text-align: center; }
+.disclosure-text { display: grid; gap: 2px; }
+.disclosure-title { font-weight: 600; font-size: 16px; }
+.disclosure-hint { color: var(--muted); font-size: 14px; }
+.evidence-panel { background: var(--panel); border: 1px solid var(--rule-strong); border-top: 0; padding: 4px 20px; }
+.evidence-panel dl { margin: 0; }
+.evidence-row { padding: 12px 0 0; }
+.evidence-split { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 12px 0; }
+.evidence-limits { display: flex; gap: 10px; align-items: baseline; padding: 10px 0 12px; border-top: 1px solid var(--rule); font-size: 14px; color: var(--muted); }
+.evidence-limits dt { margin: 0; flex: none; }
+.evidence-col { border: 1px solid var(--rule); padding: 10px 14px; background: var(--panel-raised); }
+dt { color: var(--muted); margin-bottom: 4px; }
+dd { margin: 0; }
+
+/* Decision */
+.decision { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--rule); }
+.decision .panel-heading { margin-bottom: 12px; }
+.decision .panel-heading:focus { outline: none; }
+.decision .panel-heading:focus-visible { outline: 2px solid var(--focus); }
+.actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn {
+  font: 600 16px var(--sans); min-height: 46px; padding: 10px 22px; border-radius: 2px; cursor: pointer;
+  border: 1px solid var(--ink); background: transparent; color: var(--ink);
+}
+.btn-primary { background: var(--ink); color: var(--bg); }
+.btn-primary:hover:not(:disabled):not([aria-disabled="true"]) { background: #ffffff; }
+.btn-secondary:hover:not(:disabled), .btn-quiet:hover { background: rgba(247, 239, 229, 0.08); }
+.btn-quiet { font-weight: 500; font-size: 15px; min-height: 36px; padding: 6px 16px; border-color: #77726a; }
+.btn:disabled, .btn[aria-disabled="true"] { cursor: not-allowed; border-color: #4a4741; color: #8a847a; background: transparent; }
+.help { margin: 12px 0 0; color: var(--muted); max-width: 64ch; font-size: 15px; }
+.help-blocked { color: var(--slate); }
+
+.dismiss-form fieldset { border: 0; margin: 0; padding: 0; }
+.dismiss-form legend { font-weight: 500; margin-bottom: 4px; }
+.choice { display: flex; align-items: center; gap: 10px; padding: 4px 0; min-height: 30px; cursor: pointer; color: var(--muted); }
+.other { display: grid; gap: 4px; margin: 4px 0 0 28px; max-width: 480px; font-size: 15px; color: var(--muted); }
+.count { font-size: 14px; color: var(--muted); }
+.count-ok { color: var(--ink); }
+.confirm-blocker { margin: 0; align-self: center; font-size: 15px; color: var(--amber); }
+.other input {
+  font: 400 16px var(--sans); padding: 8px 12px; border: 1px solid var(--rule-strong); border-radius: 2px;
+  background: var(--panel); color: var(--ink);
+}
+.dismiss-form .help { margin: 6px 0 10px; }
+
+.record { margin: 0; background: var(--panel); border: 1px solid var(--rule); }
+.record div { display: grid; grid-template-columns: 110px 1fr; gap: 16px; padding: 10px 16px; border-bottom: 1px solid var(--rule); }
+.record div:last-child { border-bottom: 0; }
+.record dt { margin: 0; padding-top: 3px; }
+.sim-note { margin: 12px 0 0; font-size: 14px; color: var(--muted); }
+
+@media (max-width: 980px) {
+  .layout { grid-template-columns: minmax(0, 1fr); }
+  .layout > .telemetry, .layout > .primary { grid-column: auto; grid-row: auto; }
+}
+
+@media (max-width: 640px) {
+  .wrap { padding: 0 16px; }
+  .evidence-split { grid-template-columns: 1fr; }
+  .presenter-label { flex-basis: 100%; }
+  .scenario { gap: 14px; }
+  .scenario label, .presenter .btn-quiet { font-size: 13px; }
+  .presenter .btn-quiet { padding: 2px 10px; }
+  .appbar-row { gap: 6px 12px; padding-top: 12px; padding-bottom: 12px; }
+  h1 { font-size: 18px; }
+  h1 span { margin-left: 6px; font-size: 15px; }
+  .appbar-meta { gap: 4px 12px; flex-wrap: wrap; }
+  .disclaimer { font-size: 13px; }
+  main.wrap { padding-top: 16px; }
+  .asset { font-size: 17px; }
+  .status { padding: 16px; }
+  .status-headline { font-size: 22px; }
+}
