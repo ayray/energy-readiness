@@ -8,8 +8,7 @@ concern on a ground robot before it is deployed, and what changes when the batte
 > nothing is sent anywhere, and no equipment or external system is changed. The health flag is mock data, not
 > a Safire diagnostic.
 
-**Live demo (planned, not yet verified):** https://ayray.github.io/energy-readiness/
-This URL will work only after the first GitHub Pages deployment succeeds.
+**Live demo:** https://ayray.github.io/energy-readiness/
 
 ## What it shows
 
